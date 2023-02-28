@@ -1,0 +1,23 @@
+# Base Service "Debian"
+FROM debian:buster
+
+# install dependencies
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y tini nginx openssl && \
+    openssl req -x509 -newkey -nodes rsa:4096 \
+        -keyout /etc/nginx/ssl/mnaimi.42.fr.key \
+        -out /etc/nginx/ssl/mnaimi.42.fr.crt \
+        -sha256 -days 365 -subj '/CN=mnaimi.42.fr'
+
+# copy the nginx configuration to its proper destination
+COPY custom.conf /etc/nginx/conf.d/custom.conf
+
+# Expose the HTTPS port
+EXPOSE 443
+
+# Set tini as the entrypoint
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# run the command
+CMD ["nginx", "-g", "daemon off;"]

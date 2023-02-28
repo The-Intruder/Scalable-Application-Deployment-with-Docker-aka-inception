@@ -1,0 +1,16 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: ./srcs/nginx
+      dockerfile: Dockerfile
+  mariadb:
+    build:
+      context: ./srcs/mariadb
+      dockerfile: Dockerfile
+  wordpress:
+    build:
+      context: ./srcs/wordpress
+      dockerfile: Dockerfile
+
+
