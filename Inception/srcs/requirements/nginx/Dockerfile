@@ -5,6 +5,7 @@ FROM debian:buster
 RUN apt-get update && \
 apt-get upgrade -y && \
 apt-get install -y tini nginx openssl && \
+apt-get clean && \
 mkdir -p /etc/nginx/ssl/ && \
 openssl req -x509 -sha256 -days 356 -nodes \
 -newkey rsa:2048 -subj "/CN=mnaimi.42.fr" \
@@ -12,7 +13,7 @@ openssl req -x509 -sha256 -days 356 -nodes \
 -out /etc/nginx/ssl/mnaimi.42.fr.crt
 
 # copy the nginx configuration to its proper destination
-COPY custom.conf /etc/nginx/conf.d/custom.conf
+COPY ssl.conf /etc/nginx/conf.d/ssl.conf
 
 # Expose the HTTPS port
 EXPOSE 443
