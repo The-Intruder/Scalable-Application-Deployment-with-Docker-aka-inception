@@ -3,12 +3,13 @@ FROM debian:buster
 
 # install dependencies
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y tini nginx openssl && \
-    openssl req -x509 -newkey -nodes rsa:4096 \
-        -keyout /etc/nginx/ssl/mnaimi.42.fr.key \
-        -out /etc/nginx/ssl/mnaimi.42.fr.crt \
-        -sha256 -days 365 -subj '/CN=mnaimi.42.fr'
+apt-get upgrade -y && \
+apt-get install -y tini nginx openssl && \
+mkdir -p /etc/nginx/ssl/ && \
+openssl req -x509 -sha256 -days 356 -nodes \
+-newkey rsa:2048 -subj "/CN=mnaimi.42.fr" \
+-keyout /etc/nginx/ssl/mnaimi.42.fr.key \
+-out /etc/nginx/ssl/mnaimi.42.fr.crt
 
 # copy the nginx configuration to its proper destination
 COPY custom.conf /etc/nginx/conf.d/custom.conf
