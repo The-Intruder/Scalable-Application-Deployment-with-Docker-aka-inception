@@ -15,5 +15,5 @@ COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf
 # Set the entrypoint to tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
-# Start MariaDB service
+# Start Wordpress-PHP service
 CMD ["/usr/sbin/php-fpm7.3", "-F", "-O"]
