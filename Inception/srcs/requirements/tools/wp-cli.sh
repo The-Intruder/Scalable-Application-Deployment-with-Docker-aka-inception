@@ -25,9 +25,13 @@ wp core install \
     --path=/var/www/html \
     --url=https://localhost \
     --title="My Website" \
-    --admin_user=admin \
-    --admin_password=password \
-    --admin_email=mnaimi@student.1337.ma
+    --admin_user=$WORDPRESS_ADMIN_USERNAME \
+    --admin_password=$WORDPRESS_ADMIN_PASSWORD \
+    --admin_email=$WORDPRESS_ADMIN_EMAIL
 
 
-# Note that you will need to modify the database configuration options (dbname, dbuser, dbpass, dbhost, and dbprefix) to match your database setup.
+# Note that you will need to modify the database configuration options 
+# (dbname, dbuser, dbpass, dbhost, and dbprefix) to match your database setup.
+
+# Configure wordpress so it accepts any incoming request from any 
+# ip address 0.0.0.0

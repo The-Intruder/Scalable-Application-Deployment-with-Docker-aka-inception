@@ -5,6 +5,10 @@ services:
     build:
       context: ./srcs/nginx
       dockerfile: Dockerfile
+    volumes:
+      - /home/mnaimi/data/html:/var/www/html
+    depends_on:
+      - wordpress
     ports:
       - "443:443"
 
@@ -16,15 +20,8 @@ services:
       - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - mariadb
-    environment:
-      WORDPRESS_DB_HOST: mysql
-      MYSQL_ROOT_PASSWORD: mysql_root_pass
-      WORDPRESS_DB_NAME: db_name
-      WORDPRESS_DB_USER: user_name
-      WORDPRESS_DB_PASSWORD: user_pass
-      WORDPRESS_TABLE_PREFIX: wp_
-    links:
-      - mariadb
+    # ports:
+    #   - "443:443"
     restart: always
 
   mariadb:
@@ -33,10 +30,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/mariadb:/var/lib/mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql_root_pass
-      MYSQL_DATABASE: db_name
-      MYSQL_USER: user_name
-      MYSQL_PASSWORD: user_pass
+    # ports:
+    #   - "443:443"
     restart: always
 
