@@ -3,9 +3,6 @@ FROM debian:buster
 # Copy the wp-cli installation/configuration script
 COPY ./wp-cli.sh /tmp/
 
-# Copy php-fpm configuration file
-COPY ./phpFpm-custom.conf /etc/php/7.3/fpm/phpFpm-custom.conf
-
 # Install necessary packages
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -21,7 +18,10 @@ RUN apt-get update && \
         php-zip && \
     apt-get clean && \
     chmod +x /tmp/wp-cli.sh && \
-    bash /tmp/wp-cli.sh
+    ./tmp/wp-cli.sh
+
+# Copy php-fpm configuration file
+COPY ./phpFpm-custom.conf /etc/php/7.3/fpm/phpFpm-custom.conf
 
 # Set the entrypoint to tini
 ENTRYPOINT ["/usr/bin/tini", "--"]

@@ -2,8 +2,9 @@ version: "3"
 
 services:
   nginx:
+    container_name: nginx
     build:
-      context: ./srcs/nginx
+      context: ./srcs/requirements/nginx
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/html:/var/www/html
@@ -11,26 +12,44 @@ services:
       - wordpress
     ports:
       - "443:443"
+    networks:
+      - internal
+      - external
+    env_file:
+      - .env
+    restart: on-failure
 
   wordpress:
+    container_name: wordpress
     build:
-      context: ./srcs/wordpress
+      context: ./srcs/requirements/wordpress
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - mariadb
-    # ports:
-    #   - "443:443"
-    restart: always
+    networks:
+      - internal
+    env_file:
+      - .env
+    restart: on-failure
 
   mariadb:
+    container_name: mariadb
     build:
-      context: ./srcs/mariadb
+      context: ./srcs/requirements/mariadb
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/mariadb:/var/lib/mariadb
-    # ports:
-    #   - "443:443"
-    restart: always
+    networks:
+      - internal
+    env_file:
+      - .env
+    restart: on-failure
 
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
+    external: true

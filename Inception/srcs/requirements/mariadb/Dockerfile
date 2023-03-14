@@ -17,9 +17,6 @@ RUN apt-get update && \
 # Expose the MariaDB port
 EXPOSE 3306
 
-# Copy custom configuration
-# COPY my.cnf /etc/mysql/my.cnf
-
 # Set the entrypoint to tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
