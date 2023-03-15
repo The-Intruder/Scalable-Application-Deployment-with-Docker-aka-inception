@@ -1,6 +1,8 @@
 # Base Service "Debian"
 FROM debian:buster
 
+COPY ./user-creation.sh /tmp/user-creation.sh
+
 # install dependencies
 RUN apt-get update && \
 	apt-get upgrade -y && \
@@ -9,10 +11,12 @@ RUN apt-get update && \
 		mariadb-server \
 		mariadb-client && \
 	apt-get clean && \
-	userdel mysql && \
-	useradd -u 999 mysql && \
-	mkdir -p /data/mysql && \
-	chown -R mysql:mysql /data/mysql
+	chmod +x /tmp/user-creation.sh && \
+	/tmp/user-creation.sh
+	# userdel mysql && \
+	# useradd -u 999 mysql && \
+	# mkdir -p /data/mysql && \
+	# chown -R mysql:mysql /data/mysql
 
 # Expose the MariaDB port
 EXPOSE 3306
@@ -22,7 +26,6 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Start MariaDB service
 CMD ["mysqld_safe"]
-
 
 # Steps to take
 # 1- Delete the already established (default) users

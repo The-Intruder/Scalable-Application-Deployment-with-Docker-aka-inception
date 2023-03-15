@@ -4,7 +4,7 @@ services:
   nginx:
     container_name: nginx
     build:
-      context: ./srcs/requirements/nginx
+      context: ./requirements/nginx
       dockerfile: Dockerfile
     depends_on:
       - wordpress
@@ -20,7 +20,7 @@ services:
   wordpress:
     container_name: wordpress
     build:
-      context: ./srcs/requirements/wordpress
+      context: ./requirements/wordpress
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/html:/var/www/html
@@ -35,7 +35,7 @@ services:
   mariadb:
     container_name: mariadb
     build:
-      context: ./srcs/requirements/mariadb
+      context: ./requirements/mariadb
       dockerfile: Dockerfile
     volumes:
       - /home/mnaimi/data/mariadb:/var/lib/mariadb
@@ -49,5 +49,8 @@ networks:
   internal:
     driver: bridge
   external:
-    driver: bridge
     external: true
+
+
+# The "external" network needs to be created with the following command:
+# docker network create -d bridge external
