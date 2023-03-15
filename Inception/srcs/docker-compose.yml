@@ -6,8 +6,6 @@ services:
     build:
       context: ./srcs/requirements/nginx
       dockerfile: Dockerfile
-    volumes:
-      - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - wordpress
     ports:

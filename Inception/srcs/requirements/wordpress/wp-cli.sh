@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install WP CLI in the Docker container
 curl -O --insecure https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
@@ -36,6 +38,3 @@ wp user create --allow-root \
     $WP_USER_EMAIL \
     --role=author \
     --user_pass=$WP_USER_PASS
-
-# Configure wordpress so it accepts any incoming request from any 
-# ip address 0.0.0.0

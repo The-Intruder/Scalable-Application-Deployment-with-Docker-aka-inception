@@ -22,3 +22,11 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Start MariaDB service
 CMD ["mysqld_safe"]
+
+
+# Steps to take
+# 1- Delete the already established (default) users
+# 2- Create a new MariaDB user
+# 3- Create a new MariaDB database
+# 4- Link the newly created user with the newly created database
+# 5- Create a pasword for the root MariaDB user (admin)

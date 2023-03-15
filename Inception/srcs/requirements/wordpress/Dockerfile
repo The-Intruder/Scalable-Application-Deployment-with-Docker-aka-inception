@@ -1,7 +1,7 @@
 FROM debian:buster
 
 # Copy the wp-cli installation/configuration script
-COPY ./wp-cli.sh /tmp/
+COPY ./wp-cli.sh /tmp/wp-cli.sh
 
 # Install necessary packages
 RUN apt-get update && \
