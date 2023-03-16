@@ -11,8 +11,7 @@ RUN apt-get update && \
 		mariadb-server \
 		mariadb-client && \
 	apt-get clean && \
-	chmod +x /tmp/user-creation.sh && \
-	/tmp/user-creation.sh
+	chmod +x /tmp/user-creation.sh
 	# userdel mysql && \
 	# useradd -u 999 mysql && \
 	# mkdir -p /data/mysql && \
@@ -25,7 +24,7 @@ EXPOSE 3306
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Start MariaDB service
-CMD ["mysqld_safe"]
+CMD ["/tmp/user-creation.sh"]
 
 # Steps to take
 # 1- Delete the already established (default) users
