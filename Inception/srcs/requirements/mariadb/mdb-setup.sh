@@ -3,13 +3,18 @@
 # Exit immediatly in case of an error
 set -e
 
-# Initialize the database if it doesn't already exist
-if [ ! -d /var/lib/mysql/mysql ]; then
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql
-fi
+/etc/init.d/mysql start
+# or this:
+# systemctl start mysql.service     # maybe??
+
+# Initialize the data directory and create the system tables needed to manage databases
+mysql_install_db --user=mysql --datadir='/var/lib/mysql'
 
 # Set a password for the admin aka root
 mysqladmin -u root password $MDB_ROOT_PASS
+
+# Grant all permissions related to all DBs to the root user
+mysql -y root -p"$MDB_ROOT_PASS" -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';"
 
 # Create a new mariadb database
 mysql -u root -p"$MDB_ROOT_PASS" -e "CREATE DATABASE $WP_DB_NAME;"
@@ -23,5 +28,9 @@ mysql -u root -p"$MDB_ROOT_PASS" -e "GRANT ALL PRIVILEGES ON $WP_DB_NAME.* TO '$
 # Clears the in-memory cache of user and privilege information and reloads it from disk
 mysql -u root -p"$MDB_ROOT_PASS" -e "FLUSH PRIVILEGES;"
 
+/etc/init.d/mysql stop
+# or this:
+# systemctl stop mysql.service      # maybe??
+
 # Start the MariaDB service
-exec mysqld_safe --skip-syslog --datadir='/var/lib/mysql'
+exec mysqld_safe --skip-syslog --datadir='/var/lib/mysql' --bind-address=0.0.0.0

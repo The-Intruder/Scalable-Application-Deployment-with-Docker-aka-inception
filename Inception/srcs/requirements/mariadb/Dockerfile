@@ -1,7 +1,7 @@
 # Base Service "Debian"
 FROM debian:buster
 
-COPY ./user-creation.sh /tmp/user-creation.sh
+COPY ./mdb-setup.sh /tmp/mdb-setup.sh
 
 # install dependencies
 RUN apt-get update && \
@@ -11,7 +11,7 @@ RUN apt-get update && \
 		mariadb-server \
 		mariadb-client && \
 	apt-get clean && \
-	chmod +x /tmp/user-creation.sh
+	chmod +x /tmp/mdb-setup.sh
 	# userdel mysql && \
 	# useradd -u 999 mysql && \
 	# mkdir -p /data/mysql && \
@@ -24,7 +24,7 @@ EXPOSE 3306
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Start MariaDB service
-CMD ["/tmp/user-creation.sh"]
+CMD ["/tmp/mdb-setup.sh"]
 
 # Steps to take
 # 1- Delete the already established (default) users

@@ -7,13 +7,13 @@ services:
       context: ./requirements/nginx
       dockerfile: Dockerfile
     volumes:
-      - wordpress_data:/var/www/html
+      - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - wordpress
     ports:
       - "443:443"
     networks:
-      - internal
+      - inception
       - external
     env_file:
       - .env
@@ -29,7 +29,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - internal
+      - inception
     env_file:
       - .env
     restart: on-failure
@@ -42,16 +42,14 @@ services:
     volumes:
       - /home/mnaimi/data/mariadb:/var/lib/mariadb
     networks:
-      - internal
+      - inception
     env_file:
       - .env
     restart: on-failure
 
 networks:
-  internal:
+  inception:
     driver: bridge
-  external:
-    external: true
 
 
 # The "external" network needs to be created with the following command:
