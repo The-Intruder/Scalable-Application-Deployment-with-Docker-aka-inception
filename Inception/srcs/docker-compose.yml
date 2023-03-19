@@ -6,8 +6,6 @@ services:
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
-    # volumes:
-    #   - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - wordpress
     ports:
@@ -17,14 +15,14 @@ services:
     env_file:
       - .env
     restart: on-failure
+    volumes:
+      - /Users/mnaimi/Desktop/data/wordpress:/var/www/wordpress
 
   wordpress:
     container_name: wordpress
     build:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
-    # volumes:
-    #   - /home/mnaimi/data/html:/var/www/html
     depends_on:
       - mariadb
     networks:
@@ -32,24 +30,22 @@ services:
     env_file:
       - .env
     restart: on-failure
+    volumes:
+      - /Users/mnaimi/Desktop/data/wordpress:/var/www/wordpress
 
   mariadb:
     container_name: mariadb
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
-    # volumes:
-    #   - /home/mnaimi/data/mariadb:/var/lib/mariadb
     networks:
       - inception
     env_file:
       - .env
     restart: on-failure
+    # volumes:
+    #   - /Users/mnaimi/Desktop/data/mariadb
 
 networks:
   inception:
     driver: bridge
-
-
-# The "external" network needs to be created with the following command:
-# docker network create -d bridge external

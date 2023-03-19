@@ -1,44 +1,47 @@
 #!/bin/bash
 
 # Exit immediatly in case of an error
-set -e
+# set -e
 
-if [ ! -d /var/www/wordpress ]; then
+if [ ! -d /run/php ]; then
+    mkdir -p /run/php
+    chmod 777 /run/php
+fi
+
+sed -i "s|listen = /run/php/php7.3-fpm.sock|listen = 0.0.0.0:9000|g" /etc/php/7.3/fpm/pool.d/www.conf
+
+if [ ! -f /var/www/wordpress/wp-config.php ]; then
+
     mkdir -p /var/www/wordpress
-    wp core download --allow-root \
-        --path=/var/www/wordpress \
-        --locale=en_US \
-        --version=6.1.1
-    chown -R www-data:www-data /var/www/wordpress
+    chmod -R 777 /var/www/wordpress
+
+    cd /var/www/wordpress
+    
+    wp core download --allow-root
 
     # Command that creates a wp-config.php file
-    wp core config --allow-root \
-        --path=/var/www/wordpress \
-        --dbname=$WP_DB_NAME \
-        --dbuser=$WP_DB_USER \
-        --dbpass=$WP_DB_PASS \
-        --dbhost=$WP_DB_HOST:3306 \
+    wp config create --allow-root \
+        --dbhost="$WP_DB_HOST" \
+        --dbname="$WP_DB_NAME" \
+        --dbuser="$WP_DB_USER" \
+        --dbpass="$WP_DB_PASS" \
         --dbprefix=wp_
 
     # Command which installs WordPress while creating an admin for it
     wp core install --allow-root \
-        --path=/var/www/wordpress \
-        --url=$DOMAIN_NAME \
-        --title="My Website" \
-        --admin_user=$WP_ADMIN_USER \
-        --admin_password=$WP_ADMIN_PASS \
-        --admin_email=$WP_ADMIN_EMAIL \
+        --title='My_Website' \
+        --url=localhost \
+        --admin_user="$WP_ADMIN_USER" \
+        --admin_password="$WP_ADMIN_PASS" \
+        --admin_email="$WP_ADMIN_EMAIL" \
         --skip-email
 
     # Command that creates a user
     wp user create --allow-root \
-        $WP_USER_NAME \
-        $WP_USER_EMAIL \
-        --role=author \
-        --user_pass=$WP_USER_PASS
-    
+        "$WP_USER_NAME" \
+        "$WP_USER_EMAIL" \
+        --user_pass="$WP_USER_PASS" \
+        --role=author
 fi
 
-/usr/sbin/php-fpm7.3 -F -O
-#php-fpm -F -O
-
+exec "$@"
