@@ -16,7 +16,7 @@ services:
       - .env
     restart: on-failure
     volumes:
-      - /Users/mnaimi/Desktop/data/wordpress:/var/www/wordpress
+      - /Users/mnaimi/data/wordpress:/var/www/wordpress
 
   wordpress:
     container_name: wordpress
@@ -31,7 +31,7 @@ services:
       - .env
     restart: on-failure
     volumes:
-      - /Users/mnaimi/Desktop/data/wordpress:/var/www/wordpress
+      - /Users/mnaimi/data/wordpress:/var/www/wordpress
 
   mariadb:
     container_name: mariadb
@@ -43,8 +43,67 @@ services:
     env_file:
       - .env
     restart: on-failure
-    # volumes:
-    #   - /Users/mnaimi/Desktop/data/mariadb
+    volumes:
+      - /Users/mnaimi/data/mariadb:/var/lib/mysql
+
+  adminer:
+    container_name: adminer
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    ports:
+      - "8000:8000"
+    networks:
+      - inception
+    env_file:
+      - .env
+    restart: on-failure
+
+  portainer:
+    container_name: portainer
+    build:
+      context: ./requirements/bonus/portainer
+      dockerfile: Dockerfile
+    networks:
+      - inception
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    restart: on-failure
+
+  # redis:
+  #     container_name: redis
+  #     build:
+  #       context: ./requirements/bonus/redis
+  #       dockerfile: Dockerfile
+  #     depends_on:
+  #       - mariadb
+  #     networks:
+  #       - inception
+  #     env_file:
+  #       - .env
+  #     restart: on-failure
+  #     volumes:
+  #       -
+
+  # ftp:
+  #   container_name: ftp
+  #   build:
+  #     context: ./requirements/bonus/ftp
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mariadb
+  #   networks:
+  #     - inception
+  #   env_file:
+  #     - .env
+  #   restart: on-failure
+  #   volumes:
+  #     -
+   
 
 networks:
   inception:
