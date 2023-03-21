@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit immediatly in case of an error
-# set -e
+set -e
 
 if [ ! -d /run/php ]; then
     mkdir -p /run/php
@@ -42,6 +42,11 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
         "$WP_USER_EMAIL" \
         --user_pass="$WP_USER_PASS" \
         --role=author
+    
+    wp config set WP_CACHE true --raw
+    wp config set REDIS_HOST redis
+    wp config set REDIS_PORT 6379
+
 fi
 
 exec "$@"

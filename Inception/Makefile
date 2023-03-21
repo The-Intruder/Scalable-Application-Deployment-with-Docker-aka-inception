@@ -57,6 +57,6 @@ fclean: clean
 
 re: fclean all
 
-
-
 # Connect the FTP to the wordpress ontainer ONLY
+# Delete the volumes
+# Check the evaluation pdf

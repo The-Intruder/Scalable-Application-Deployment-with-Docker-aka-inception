@@ -13,9 +13,6 @@ if [ ! -d /var/lib/mysql/$WP_DB_NAME ]; then
     service mysql start &
     wait $!
 
-    # Set a password for the admin aka root
-    # mysqladmin -u root password $MDB_ROOT_PASS
-
     # Create a new mariadb database
     mysql -u root -e "CREATE DATABASE $WP_DB_NAME;"
 
@@ -28,9 +25,13 @@ if [ ! -d /var/lib/mysql/$WP_DB_NAME ]; then
     # Clears the in-memory cache of user and privilege information and reloads it from disk
     mysql -u root -e "FLUSH PRIVILEGES;"
 
+    # Set a password for the admin aka root
+    # mysqladmin -u root password $MDB_ROOT_PASS
+
     # kill $(cat /var/run/mysqld/mysqld.pid)
     service mysql stop &
     wait $!
+
 fi
 
 # Start the MariaDB service

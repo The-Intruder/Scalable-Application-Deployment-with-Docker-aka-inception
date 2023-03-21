@@ -25,6 +25,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mariadb
+      - adminer
+      - cadvisor
     networks:
       - inception
     env_file:
@@ -43,8 +45,8 @@ services:
     env_file:
       - .env
     restart: on-failure
-    volumes:
-      - /Users/mnaimi/data/mariadb:/var/lib/mysql
+    # volumes:
+    #   - /Users/mnaimi/data/mariadb:/var/lib/mysql
 
   adminer:
     container_name: adminer
@@ -61,33 +63,31 @@ services:
       - .env
     restart: on-failure
 
-  portainer:
-    container_name: portainer
+  cadvisor:
+    container_name: cadvisor
     build:
-      context: ./requirements/bonus/portainer
+      context: ./requirements/bonus/cadvisor
       dockerfile: Dockerfile
     networks:
       - inception
     ports:
-      - "9000:9000"
+      - "8080:8080"
     env_file:
       - .env
     restart: on-failure
 
-  # redis:
-  #     container_name: redis
-  #     build:
-  #       context: ./requirements/bonus/redis
-  #       dockerfile: Dockerfile
-  #     depends_on:
-  #       - mariadb
-  #     networks:
-  #       - inception
-  #     env_file:
-  #       - .env
-  #     restart: on-failure
-  #     volumes:
-  #       -
+  redis:
+      container_name: redis
+      build:
+        context: ./requirements/bonus/redis
+        dockerfile: Dockerfile
+      depends_on:
+        - wordpress
+      networks:
+        - inception
+      env_file:
+        - .env
+      restart: on-failure
 
   # ftp:
   #   container_name: ftp
@@ -101,10 +101,20 @@ services:
   #   env_file:
   #     - .env
   #   restart: on-failure
-  #   volumes:
-  #     -
-   
+
+  # static-website:
+  #   container_name: static-website
+  #   build:
+  #     context: ./requirements/bonus/static-website
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - inception
+  #   env_file:
+  #     - .env
+  #   restart: on-failure
 
 networks:
   inception:
     driver: bridge
+
+# Use Node.Js (Express.js) as static website server
