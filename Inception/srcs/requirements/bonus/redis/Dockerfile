@@ -10,7 +10,10 @@ RUN apt-get update && \
 # Expose Redis port
 EXPOSE 6379
 
+# Expose Redis port
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
+# RUN sed -i "s|bind 127.0.0.1 ::1|bind 0.0.0.0 ::1|g" /etc/redis/redis.conf
+
 # Start Redis server
-CMD ["redis-server", "--bind 0.0.0.0"]
+CMD ["redis-server", "--protected-mode", "no"]

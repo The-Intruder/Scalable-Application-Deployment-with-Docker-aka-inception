@@ -25,8 +25,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mariadb
-      - adminer
-      - cadvisor
     networks:
       - inception
     env_file:
@@ -83,11 +81,26 @@ services:
         dockerfile: Dockerfile
       depends_on:
         - wordpress
+      ports:
+        - "6379:6379"
       networks:
         - inception
       env_file:
         - .env
       restart: on-failure
+
+  static-website:
+    container_name: static-website
+    build:
+      context: ./requirements/bonus/static-website
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - inception
+    env_file:
+      - .env
+    restart: on-failure
 
   # ftp:
   #   container_name: ftp
@@ -96,17 +109,6 @@ services:
   #     dockerfile: Dockerfile
   #   depends_on:
   #     - mariadb
-  #   networks:
-  #     - inception
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # static-website:
-  #   container_name: static-website
-  #   build:
-  #     context: ./requirements/bonus/static-website
-  #     dockerfile: Dockerfile
   #   networks:
   #     - inception
   #   env_file:
