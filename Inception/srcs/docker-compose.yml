@@ -11,7 +11,7 @@ services:
     ports:
       - "443:443"
     networks:
-      - inception
+      - inception-network
     env_file:
       - .env
     restart: on-failure
@@ -26,7 +26,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - inception
+      - inception-network
     env_file:
       - .env
     restart: on-failure
@@ -39,7 +39,7 @@ services:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     networks:
-      - inception
+      - inception-network
     env_file:
       - .env
     restart: on-failure
@@ -56,7 +56,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - inception
+      - inception-network
     env_file:
       - .env
     restart: on-failure
@@ -67,7 +67,7 @@ services:
       context: ./requirements/bonus/cadvisor
       dockerfile: Dockerfile
     networks:
-      - inception
+      - inception-network
     ports:
       - "8080:8080"
     env_file:
@@ -84,7 +84,7 @@ services:
       ports:
         - "6379:6379"
       networks:
-        - inception
+        - inception-network
       env_file:
         - .env
       restart: on-failure
@@ -97,26 +97,28 @@ services:
     ports:
       - "80:80"
     networks:
-      - inception
+      - inception-network
     env_file:
       - .env
     restart: on-failure
 
-  # ftp:
-  #   container_name: ftp
-  #   build:
-  #     context: ./requirements/bonus/ftp
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mariadb
-  #   networks:
-  #     - inception
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
+  ftp:
+    container_name: ftp
+    build:
+      context: ./requirements/bonus/ftp
+      dockerfile: Dockerfile
+    depends_on:
+      - wordpress
+    ports:
+      - "20:20"
+      - "21:21"
+      - "10000-10100:10000-10100"
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
 
 networks:
-  inception:
+  inception-network:
     driver: bridge
-
-# Use Node.Js (Express.js) as static website server
