@@ -14,6 +14,8 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
     # 
     mkdir -p /var/www/wordpress
     chmod -R 777 /var/www/wordpress
+    chmod a-w /var/www/wordpress
+    chmod u+w /var/www/wordpress
 
     #
     cd /var/www/wordpress
