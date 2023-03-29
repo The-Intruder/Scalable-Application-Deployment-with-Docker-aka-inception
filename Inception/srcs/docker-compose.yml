@@ -17,7 +17,6 @@ services:
     restart: on-failure
     volumes:
       - /Users/mnaimi/data/wordpress:/var/www/wordpress
-
   wordpress:
     container_name: wordpress
     build:
@@ -32,76 +31,18 @@ services:
     restart: on-failure
     volumes:
       - /Users/mnaimi/data/wordpress:/var/www/wordpress
-
   mariadb:
     container_name: mariadb
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
+    volumes:
+      - /Users/mnaimi/data/mariadb:/var/lib/mysql
     networks:
       - inception-network
     env_file:
       - .env
     restart: on-failure
-    # volumes:
-    #   - /Users/mnaimi/data/mariadb:/var/lib/mysql
-
-  # adminer:
-  #   container_name: adminer
-  #   build:
-  #     context: ./requirements/bonus/adminer
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mariadb
-  #   ports:
-  #     - "8000:8000"
-  #   networks:
-  #     - inception-network
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # cadvisor:
-  #   container_name: cadvisor
-  #   build:
-  #     context: ./requirements/bonus/cadvisor
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - inception-network
-  #   ports:
-  #     - "8080:8080"
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # redis:
-  #     container_name: redis
-  #     build:
-  #       context: ./requirements/bonus/redis
-  #       dockerfile: Dockerfile
-  #     depends_on:
-  #       - wordpress
-  #     ports:
-  #       - "6379:6379"
-  #     networks:
-  #       - inception-network
-  #     env_file:
-  #       - .env
-  #     restart: on-failure
-
-  # static-website:
-  #   container_name: static-website
-  #   build:
-  #     context: ./requirements/bonus/static-website
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - inception-network
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
   ftp:
     container_name: ftp
     build:
@@ -113,6 +54,64 @@ services:
       - "20:20"
       - "21:21"
       - "10000-10100:10000-10100"
+    volumes:
+      - /Users/mnaimi/data/wordpress:/var/www/wordpress
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+
+  adminer:
+    container_name: adminer
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    ports:
+      - "8000:8000"
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+
+  cadvisor:
+    container_name: cadvisor
+    build:
+      context: ./requirements/bonus/cadvisor
+      dockerfile: Dockerfile
+    networks:
+      - inception-network
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: on-failure
+
+  redis:
+      container_name: redis
+      build:
+        context: ./requirements/bonus/redis
+        dockerfile: Dockerfile
+      depends_on:
+        - wordpress
+      ports:
+        - "6379:6379"
+      networks:
+        - inception-network
+      env_file:
+        - .env
+      restart: on-failure
+
+  static-website:
+    container_name: static-website
+    build:
+      context: ./requirements/bonus/static-website
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
     networks:
       - inception-network
     env_file:
@@ -122,3 +121,5 @@ services:
 networks:
   inception-network:
     driver: bridge
+
+# host:localhost in the DNS resolver inside the VM
