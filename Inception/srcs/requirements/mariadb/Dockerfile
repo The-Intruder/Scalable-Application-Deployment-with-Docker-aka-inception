@@ -2,7 +2,7 @@
 FROM debian:buster
 
 # Copyt the script into the image
-COPY ./mdb-setup.sh /tmp/mdb-setup.sh
+COPY ./tools/mdb-setup.sh /tmp/mdb-setup.sh
 
 # install dependencies
 RUN apt-get update && \

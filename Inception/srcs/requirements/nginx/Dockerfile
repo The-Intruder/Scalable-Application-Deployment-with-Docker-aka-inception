@@ -17,7 +17,7 @@ RUN apt-get update && \
         -out /etc/nginx/ssl/mnaimi.42.fr.crt
 
 # copy the nginx configuration to its proper destination
-COPY nginx-custom.conf /etc/nginx/conf.d/nginx-custom.conf
+COPY ./conf/nginx-custom.conf /etc/nginx/conf.d/nginx-custom.conf
 
 # Expose the HTTPS port
 EXPOSE 443

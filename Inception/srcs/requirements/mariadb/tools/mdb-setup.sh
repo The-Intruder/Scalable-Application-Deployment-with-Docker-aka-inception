@@ -5,6 +5,7 @@
 
 # Change the default listening address from 'localhost' to 'everything'
 sed -i "s|bind-address            = 127.0.0.1|bind-address            = 0.0.0.0|g" /etc/mysql/mariadb.conf.d/50-server.cnf
+#sed -i '/\[mysqld\]/a bind-address = 0.0.0.0\nport = 3306' /etc/mysql/my.cnf
 
 # Check if the DB was already created
 if [ ! -d /var/lib/mysql/$WP_DB_NAME ]; then

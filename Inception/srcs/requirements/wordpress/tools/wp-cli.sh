@@ -63,3 +63,4 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
 fi
 
 exec "$@"
+

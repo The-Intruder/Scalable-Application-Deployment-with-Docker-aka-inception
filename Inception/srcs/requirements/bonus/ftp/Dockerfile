@@ -5,8 +5,8 @@ RUN apt-get update && \
     apt-get install -y vsftpd openssl && \
     apt-get clean
 
-COPY vsftpd.conf /etc/vsftpd.conf
-COPY script.sh /tmp/script.sh
+COPY ./conf/vsftpd.conf /etc/vsftpd.conf
+COPY ./tools/script.sh /tmp/script.sh
 
 EXPOSE 20 21 10000-10100
 

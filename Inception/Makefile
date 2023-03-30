@@ -33,7 +33,7 @@ endef
 
 .PHONY: all clean fclean re start a-stop m-stop
 
-all: start
+all: m-stop start
 
 start:
 	@docker-compose up --build
