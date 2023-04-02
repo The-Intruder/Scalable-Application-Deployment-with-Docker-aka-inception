@@ -8,8 +8,8 @@ RUN apt-get update && \
         adminer && \
     apt-get clean
 
-# Expose port 8080
-EXPOSE 8080
+# Expose port 8000
+EXPOSE 8000
 
 # Start tini
 ENTRYPOINT [ "/usr/bin/tini", "--" ]

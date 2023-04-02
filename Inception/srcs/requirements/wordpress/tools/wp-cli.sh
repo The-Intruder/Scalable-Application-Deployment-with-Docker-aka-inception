@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit immediatly in case of an error
-set -e
-
 if [ ! -d /run/php ]; then
     mkdir -p /run/php
     chmod 777 /run/php
@@ -32,10 +29,9 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --dbprefix=wp_
 
     # Command which installs WordPress while creating an admin for it
-    # --url=mnaimi.42.fr
     wp core install --allow-root \
         --title='My_Website' \
-        --url=localhost \
+        --url="$DOMAIN_NAME" \
         --admin_user="$WP_ADMIN_USER" \
         --admin_password="$WP_ADMIN_PASS" \
         --admin_email="$WP_ADMIN_EMAIL" \
@@ -48,18 +44,26 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --user_pass="$WP_USER_PASS" \
         --role=author
 
+
+    wp theme install twentytwentytwo --activate --allow-root
+
     # 
     wp plugin install redis-cache --activate --allow-root
+    # 
     wp redis enable --allow-root
-    wp config set --type=constant --allow-root WP_REDIS_HOST redis
-    wp config set --type=constant --allow-root WP_REDIS_PORT 6379
-    wp config set --type=constant --allow-root WP_CACHE true --raw 
-    wp config set --type=constant --allow-root WP_CACHE_KEY_SALT $WP_DB_NAME
-    wp config set --type=constant --allow-root WP_REDIS_CLIENT predis
-    wp config set --type=constant --allow-root WP_REDIS_SCHEME tcp
-    wp config set --type=constant --allow-root WP_REDIS_DATABASE 0
-    wp config set --type=constant --allow-root WP_REDIS_PASSWORD ''
-    wp config set --type=constant --allow-root WP_REDIS_READ_TIMEOUT 5
+    # When set to true, it enables the use of Redis as the object cache.
+    wp config set --type=constant --allow-root --raw WP_CACHE true
+    # Redis server hostname or IP address
+    wp config set --type=constant --allow-root --raw WP_REDIS_HOST redis
+    # Redis server port number.
+    wp config set --type=constant --allow-root --raw WP_REDIS_PORT 6379
+    # Redis connection protocol
+    wp config set --type=constant --allow-root --raw WP_REDIS_SCHEME tcp
+
+    # chown -R www-data:www-data /var/www/wordpress/wp-content/plugins/redis-cache
+    chown -R www-data:www-data /var/www/wordpress/wp-content
+    # chmod -R 775 /var/www/wordpress/wp-content/plugins/redis-cache
+    chmod -R 775 /var/www/wordpress/wp-content
 fi
 
 exec "$@"

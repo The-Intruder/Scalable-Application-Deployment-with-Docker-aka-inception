@@ -13,13 +13,13 @@ else
     echo "mnaimi" >> /etc/vsftpd.userlist
 fi
 
-if [ -d /var/run/vsftpd/empty ]; then
-    echo "Folder \"/var/run/vsftpd/empty\" already exists"
-else
-    echo "Folder \"/var/run/vsftpd/empty\" does not exist"
-    mkdir -p /var/run/vsftpd/empty
-    chmod 777 /var/run/vsftpd/empty
-fi
+# if [ -d /var/run/vsftpd/empty ]; then
+#     echo "Folder \"/var/run/vsftpd/empty\" already exists"
+# else
+#     echo "Folder \"/var/run/vsftpd/empty\" does not exist"
+#     mkdir -p /var/run/vsftpd/empty
+#     chmod 777 /var/run/vsftpd/empty
+# fi
 
 if [ -e /etc/ssl/private/vsftpd.key ] && [ -e "/etc/ssl/private/vsftpd.crt" ]; then
     echo "Certification already exists"
@@ -32,6 +32,9 @@ else
         -out /etc/ssl/private/vsftpd.crt
 fi
 
-mkdir -p /var/www/wordpress/
+if [ ! -d /var/www/wordpress ]; then
+    mkdir -p /var/www/wordpress
+fi
+
 
 exec "$@"

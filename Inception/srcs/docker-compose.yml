@@ -24,13 +24,13 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mariadb
+    volumes:
+      - wp-data:/var/www/wordpress
     networks:
       - inception-network
     env_file:
       - .env
     restart: on-failure
-    volumes:
-      - wp-data:/var/www/wordpress
   mariadb:
     container_name: mariadb
     build:
@@ -38,6 +38,76 @@ services:
       dockerfile: Dockerfile
     volumes:
       - db-data:/var/lib/mysql
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+  ftp:
+    container_name: ftp
+    build:
+      context: ./requirements/bonus/ftp
+      dockerfile: Dockerfile
+    depends_on:
+      - wordpress
+    ports:
+      - "20:20"
+      - "21:21"
+      - "10000-10100:10000-10100"
+    volumes:
+      - wp-data:/var/www/wordpress
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+  adminer:
+    container_name: adminer
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    ports:
+      - "8000:8000"
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+  cadvisor:
+    container_name: cadvisor
+    build:
+      context: ./requirements/bonus/cadvisor
+      dockerfile: Dockerfile
+    networks:
+      - inception-network
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: on-failure
+  redis:
+      container_name: redis
+      build:
+        context: ./requirements/bonus/redis
+        dockerfile: Dockerfile
+      depends_on:
+        - wordpress
+      ports:
+        - "6379:6379"
+      networks:
+        - inception-network
+      env_file:
+        - .env
+      restart: on-failure
+  static-website:
+    container_name: static-website
+    build:
+      context: ./requirements/bonus/static-website
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
     networks:
       - inception-network
     env_file:
@@ -62,78 +132,4 @@ volumes:
       o: bind
       device: /home/mnaimi/data/mariadb
 
-  # ftp:
-  #   container_name: ftp
-  #   build:
-  #     context: ./requirements/bonus/ftp
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - wordpress
-  #   ports:
-  #     - "20:20"
-  #     - "21:21"
-  #     - "10000-10100:10000-10100"
-  #   volumes:
-  #     - wp-data:/var/www/wordpress
-  #   networks:
-  #     - inception-network
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # adminer:
-  #   container_name: adminer
-  #   build:
-  #     context: ./requirements/bonus/adminer
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mariadb
-  #   ports:
-  #     - "8000:8000"
-  #   networks:
-  #     - inception-network
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # cadvisor:
-  #   container_name: cadvisor
-  #   build:
-  #     context: ./requirements/bonus/cadvisor
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - inception-network
-  #   ports:
-  #     - "8080:8080"
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
-
-  # redis:
-  #     container_name: redis
-  #     build:
-  #       context: ./requirements/bonus/redis
-  #       dockerfile: Dockerfile
-  #     depends_on:
-  #       - wordpress
-  #     ports:
-  #       - "6379:6379"
-  #     networks:
-  #       - inception-network
-  #     env_file:
-  #       - .env
-  #     restart: on-failure
-
-  # static-website:
-  #   container_name: static-website
-  #   build:
-  #     context: ./requirements/bonus/static-website
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:80"
-  #   networks:
-  #     - inception-network
-  #   env_file:
-  #     - .env
-  #   restart: on-failure
 # host:localhost in the DNS resolver inside the VM

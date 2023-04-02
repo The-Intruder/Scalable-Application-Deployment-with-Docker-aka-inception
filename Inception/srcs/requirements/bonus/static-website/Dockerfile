@@ -11,10 +11,8 @@ RUN apt-get update && \
 # Copy the website files into the container
 COPY ./tools/. /var/www/html/
 
-# RUN sed -i 's/Listen 80/Listen 90/' /etc/apache2/httpd.conf
-
-# Expose port 90
-EXPOSE 90
+# Expose port 80
+EXPOSE 80
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
