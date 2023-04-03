@@ -1,9 +1,5 @@
 FROM debian:buster
 
-# Copy the wp-cli installation/configuration script
-COPY ./tools/wp-cli.sh /tmp/wp-cli.sh
-RUN chmod 777 /tmp/wp-cli.sh
-
 # Install necessary packages
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -23,13 +19,17 @@ RUN apt-get update && \
         mariadb-server && \
     apt-get clean
 
-EXPOSE 9000
-
 RUN curl -LOk https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-ENTRYPOINT ["sh", "/tmp/wp-cli.sh"]
+# Copy the wp-cli installation/configuration script
+COPY ./tools/wordpress.sh /tmp/wordpress.sh
+RUN chmod 777 /tmp/wordpress.sh
+
+EXPOSE 9000
+
+ENTRYPOINT ["sh", "/tmp/wordpress.sh"]
 
 # Start Wordpress-PHP service
 CMD [ "/usr/sbin/php-fpm7.3", "-F"]

@@ -9,17 +9,6 @@ YLW			:= \e[33m
 CYN			:= \e[36m
 
 # **************************************************************************** #
-# ***************************    COMPILATION   ******************************* #
-# **************************************************************************** #
-
-CC			:= c++
-CC_FLAGS	:= -Wall -Wextra -Werror -Wno-shadow -std=c++98
-
-NAME		:= MutantStack
-MAIN		:= main.cpp
-HEAD		:= MutantStack.hpp
-
-# **************************************************************************** #
 # ****************************    FUNCTIONS    ******************************* #
 # **************************************************************************** #
 
@@ -36,26 +25,40 @@ endef
 all: m-stop start
 
 start:
-	@docker-compose up --build
+	@sudo docker-compose up --build
 	$(call print_status, ${GRN}, "Auto-Start has been performed successfully")
 
 a-stop:
-	@docker-compose down
+	@sudo docker-compose down
 	$(call print_status, ${YLW}, "Auto-Halt has been performed successfully")
 
 m-stop:
-	@docker stop $(docker ps -aq)
+	@sudo docker stop `sudo docker ps -aq`
 	$(call print_status, ${YLW}, "Manual-Halt has been performed successfully")
 
 clean:
-	@docker rm -f $(docker ps -aq)
+	@sudo docker rm -f `sudo docker ps -aq`
 	$(call print_status, ${RED}, "Containers deleted successfully")
 
 fclean: clean
-	docker rmi -f $(docker images -q)
+	@sudo docker rmi -f `sudo docker images -q`
 	$(call print_status, ${RED}, "Images deleted successfully")
 
 re: fclean all
+
+reset:
+	$(call print_status, ${YLW}, "Stopping all the currently running continers ...")
+	@-sudo docker stop `sudo docker ps -aq`
+	$(call print_status, ${RED}, "Deleting all the cache in docker ...")
+	@echo 'y' | sudo docker system prune -a
+	$(call print_status, ${RED}, "Removing the ~/data folder ...")
+	@sudo rm -rf /home/mnaimi/data
+	$(call print_status, ${GRN}, "Making the ~/data/wordpress folder ...")
+	@mkdir -p /home/mnaimi/data/wordpress
+	$(call print_status, ${GRN}, "Making the ~/data/mariadb folder ...")
+	@mkdir -p /home/mnaimi/data/mariadb
+	$(call print_status, ${CYN}, "Running all the containers ...")
+	@sudo docker-compose -f srcs/docker-compose.yml -p Inception up --build
 
 # Connect the FTP to the wordpress ontainer ONLY
 # Delete the volumes

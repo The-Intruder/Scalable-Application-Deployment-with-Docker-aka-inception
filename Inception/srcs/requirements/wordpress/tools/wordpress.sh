@@ -10,9 +10,7 @@ sed -i "s|listen = /run/php/php7.3-fpm.sock|listen = 0.0.0.0:9000|g" /etc/php/7.
 if [ ! -e /var/www/wordpress/wp-config.php ]; then
     # 
     mkdir -p /var/www/wordpress
-    chmod -R 777 /var/www/wordpress
-
-    #
+    chmod -R 775 /var/www/wordpress
     cd /var/www/wordpress
 
     # 
@@ -44,9 +42,8 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
         --user_pass="$WP_USER_PASS" \
         --role=author
 
-
+    # 
     wp theme install twentytwentytwo --activate --allow-root
-
     # 
     wp plugin install redis-cache --activate --allow-root
     # 
@@ -60,11 +57,7 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
     # Redis connection protocol
     wp config set --type=constant --allow-root --raw WP_REDIS_SCHEME tcp
 
-    # chown -R www-data:www-data /var/www/wordpress/wp-content/plugins/redis-cache
-    chown -R www-data:www-data /var/www/wordpress/wp-content
-    # chmod -R 775 /var/www/wordpress/wp-content/plugins/redis-cache
-    chmod -R 775 /var/www/wordpress/wp-content
+    chown -R www-data:www-data /var/www/wordpress
 fi
 
 exec "$@"
-
