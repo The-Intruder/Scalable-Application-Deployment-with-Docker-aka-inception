@@ -60,6 +60,20 @@
 
 ### Wordpress
 
+| Package name | Description |
+| --- | --- |
+| `php7.3` | This package installs PHP version 7.3, which is a popular server-side scripting language used for web development. |
+| `php7.3-cgi` | This package provides the Common Gateway Interface (CGI) binary for PHP version 7.3, which allows PHP scripts to be executed by a web server. |
+| `php7.3-fpm` | This package provides the FastCGI Process Manager (FPM) for PHP version 7.3, which is a high-performance alternative to the traditional CGI binary. FPM provides better performance and scalability by allowing PHP processes to be managed separately from the web server. |
+| `php7.3-mysql` | This package provides support for MySQL in PHP version 7.3, allowing PHP scripts to interact with MySQL databases. |
+| `php7.3-gd` | This package provides support for the GD graphics library in PHP version 7.3, which allows PHP scripts to create and manipulate images. |
+| `php7.3-curl` | This package provides support for the cURL library in PHP version 7.3, which allows PHP scripts to make HTTP requests to other servers. |
+| `php7.3-xml` | This package provides support for XML in PHP version 7.3, allowing PHP scripts to parse and manipulate XML documents. |
+| `php7.3-mbstring` | This package provides support for multibyte string functions in PHP version 7.3, which allows PHP scripts to work with non-ASCII strings. |
+| `php7.3-zip` | This package provides support for ZIP archives in PHP version 7.3, allowing PHP scripts to create and manipulate ZIP files. |
+| `php7.3-pdo` | This package provides support for the PHP Data Objects (PDO) extension in PHP version 7.3, which allows PHP scripts to interact with various databases using a unified interface. |
+| `php7.3-cli` | This package provides the command-line interface (CLI) binary for PHP version 7.3, which allows PHP scripts to be executed from the command line. |
+
 ### MariaDB
 
 ### Nginx
@@ -118,48 +132,185 @@ secure_chroot_dir=/var/www                          # Specifies the directory wh
 # isolate_network=NO                                  # When set to YES, the FTP server will try to isolate network sessions for each user.
 ```
 
-
 ```conf
+#  Setting local_enable to YES allows local users to log in to the FTP server,
+# while setting it to NO allows only anonymous users to connect.
 local_enable=YES
+# ---------------------------------------------------------------------------- #
+#  Setting xferlog_enable to YES enables transfer logging, which can be useful 
+# for monitoring and auditing file transfer activities on the FTP server.
 xferlog_enable=YES
-xferlog_file=/dev/stdout
+xferlog_file=/dev/stderr
+# ---------------------------------------------------------------------------- #
+#  Setting connect_from_port_20 to YES enables the use of port 20 for outgoing
+# FTP data connections, which can help to avoid issues with firewalls and NAT
+# devices.
 connect_from_port_20=YES
-seccomp_sandbox=NO
+# ---------------------------------------------------------------------------- #
+#  Setting seccomp_sandbox to NO disables the use of the seccomp sandbox for
+# the vsftpd process, which may be necessary in some cases but may also increase
+# the attack surface of the FTP server.
+# seccomp_sandbox=NO
+# ---------------------------------------------------------------------------- #
+#  Setting write_enable to YES enables write access for authenticated users,
+# allowing them to upload files and create directories on the server, while 
+# setting it to NO disables write access, preventing users from modifying files
+# on the server.
 write_enable=YES
-anonymous_enable=NO
+# ---------------------------------------------------------------------------- #
+#  Setting dirmessage_enable to YES enables the display of directory messages
+# when a user changes to a new directory, while setting it to NO disables the
+# display of directory messages, potentially improving server performance and
+# reducing the risk of revealing sensitive information
 dirmessage_enable=YES
-chroot_local_user=YES
-allow_writeable_chroot=YES
-user_sub_token=$USER
+# ---------------------------------------------------------------------------- #
+#  The local_root directive specifies the local root directory for the FTP
+# user. The local root directory is the directory on the server's file system
+# that the FTP user will be chrooted to upon logging in to the FTP server.
 local_root=/var/www/wordpress
+# ---------------------------------------------------------------------------- #
+#  Setting chroot_local_user to YES restricts users to their home directories
+# and prevents them from accessing other parts of the file system, which can 
+# help to improve the security of the server. However, it can also cause issues
+# with certain applications or services that require access to files or
+# directories outside of the user's home directory.
+chroot_local_user=YES
+# ---------------------------------------------------------------------------- #
+#  Setting allow_writeable_chroot to YES allows users to create and modify
+# files within their jailed home directory, which can be useful for certain
+# use cases. However, it can also be a security risk, and should be used with
+# caution.
+allow_writeable_chroot=YES
+# ---------------------------------------------------------------------------- #
+#  The user_sub_token directive specifies the token that vsftpd should use to
+# replace the $USER variable in the local_root setting. By default, the
+# local_root setting specifies the path to the root directory for all users.
+# However, by using the user_sub_token directive, we can specify a custom
+# root directory for each user.
+#   For example, if user_sub_token is set to $USER, and a user named "jane"
+# logs in to the FTP server, then their custom root directory would be
+# /path/to/vsftpd/$USER, which would be equivalent to /path/to/vsftpd/jane.
+# user_sub_token=$USER
+# ---------------------------------------------------------------------------- #
+#  The listen directive is used to specify whether or not vsftpd should listen
+# for incoming connections. When set to YES, it enables the use of other
+# related directives that allow for further customization of the listening
+# behavior of the server.
 listen=YES
-listen_port=21
+# ---------------------------------------------------------------------------- #
+#  The listen_port directive in an FTP server configuration file specifies the
+# port number on which the server listens for incoming connections. By default,
+# FTP servers listen on port number 21.
+# listen_port=21
+# ---------------------------------------------------------------------------- #
+#   The listen_address directive in a vsftpd configuration file specifies the
+# IP address that the FTP server will listen on for incoming connections.
+#   The value 0.0.0.0 is a special address that means "listen on all available
+# network interfaces". This means that the server will accept connections on
+# any network interface that is configured on the host, including interfaces
+# that are accessible from the local network and from the Internet.
 listen_address=0.0.0.0
-pasv_address=0.0.0.0
-# pasv_addr_resolve=NO
-pasv_addr_resolve=YES
+# ---------------------------------------------------------------------------- #
+#   The pasv_enable directive is used to enable or disable passive mode for the
+# FTP server. In passive mode, the FTP server listens on a range of ports for
+# data connections initiated by the FTP client. This is in contrast to active
+# mode, where the FTP client listens on a port for data connections initiated
+# by the FTP server.
 pasv_enable=YES
+# ---------------------------------------------------------------------------- #
+#   The pasv_address directive in vsftpd configuration specifies the IP address
+# that the server will advertise to clients for passive mode data connections.
+#   Setting pasv_address to 0.0.0.0 instructs the server to advertise its own
+# IP address to clients. This can be useful in situations where the server is
+# not behind a NAT gateway and its IP address is reachable by clients.
+pasv_address=0.0.0.0
+# ---------------------------------------------------------------------------- #
+#   The pasv_addr_resolve directive in an FTP server configuration file
+# determines whether the server should attempt to resolve the IP address of
+# the passive mode data connection.
+#   If set to YES, the server will attempt to resolve the IP address of the
+# client connected in passive mode. This is useful when the client is located
+# behind a NAT (Network Address Translation) router, where the client's IP
+# address is not directly accessible from the server.
+pasv_addr_resolve=YES
+# ---------------------------------------------------------------------------- #
 pasv_min_port=10000
+# ---------------------------------------------------------------------------- #
 pasv_max_port=10100
-port_enable=YES
-userlist_enable=YES
-userlist_file=/etc/vsftpd.userlist
-userlist_deny=NO
+# ---------------------------------------------------------------------------- #
+#   The port_enable directive in vsftpd configuration file determines whether
+# the FTP server will accept active FTP connections.
+# port_enable=YES
+# ---------------------------------------------------------------------------- #
+# 
+# userlist_enable=YES
+# ---------------------------------------------------------------------------- #
+# userlist_file=/etc/vsftpd.userlist
+# ---------------------------------------------------------------------------- #
+#  The "userlist_deny" directive is used to control access to the FTP server
+# based on the contents of the "userlist_file", with a value of "YES" denying
+# access to listed users and a value of "NO" allowing access to all users by
+# default.
+# userlist_deny=NO
+# ---------------------------------------------------------------------------- #
+#   The "secure_chroot_dir" is used to specify the directory for the chroot
+# jail for local users, providing an extra layer of security to prevent
+# unauthorized access to system files and directories.
 secure_chroot_dir=/var/www
+# ---------------------------------------------------------------------------- #
+#   This directive enables SSL/TLS encryption for FTP connections. When set to
+# "YES", the FTP server will require SSL/TLS for all connections. This ensures
+# that all data transmitted between the client and server is encrypted and
+# cannot be intercepted or read by third parties. To use SSL/TLS, the client
+# must also support this feature and be configured to use it. This directive
+# requires the OpenSSL library to be installed on the server.
 ssl_enable=YES
+# ---------------------------------------------------------------------------- #
 rsa_cert_file=/etc/ssl/private/vsftpd.crt
+# ---------------------------------------------------------------------------- #
 rsa_private_key_file=/etc/ssl/private/vsftpd.key
-# blablabla=BLABLA
-allow_anon_ssl=NO
-force_local_data_ssl=YES
-force_local_logins_ssl=YES
-ssl_tlsv1=YES
-ssl_sslv2=NO
-ssl_sslv3=NO
-require_ssl_reuse=NO
+# ---------------------------------------------------------------------------- #
+#  Setting anonymous_enable to YES enables anonymous FTP access to the server,
+# allowing users to connect without providing a username or password, while
+# setting it to NO disables anonymous FTP access, requiring users to
+# authenticate before accessing files on the server.
+anonymous_enable=NO
+# ---------------------------------------------------------------------------- #
+#   The "allow_anon_ssl" directive determines whether anonymous users are
+# allowed to use SSL/TLS encryption when connecting to the FTP server.
+#   Setting it to "NO" helps improve security by preventing potential
+# security breaches or unauthorized access to sensitive information.
+# allow_anon_ssl=NO
+# ---------------------------------------------------------------------------- #
+#   The force_local_data_ssl directive forces SSL/TLS encryption for local data
+# transfers between the FTP server and client. When set to YES, the FTP server
+# will only allow encrypted SSL/TLS connections for local data transfers. This
+# helps to ensure the security and privacy of the data being transferred.
+# force_local_data_ssl=YES
+# ---------------------------------------------------------------------------- #
+#   The force_local_logins_ssl directive forces the use of SSL/TLS encryption
+# for local logins in the vsftpd FTP server, increasing the security of the
+# authentication process.
+# force_local_logins_ssl=YES
+# ---------------------------------------------------------------------------- #
+# 
+# ssl_tlsv1=YES
+# ---------------------------------------------------------------------------- #
+# 
+# ssl_sslv2=NO
+# ---------------------------------------------------------------------------- #
+# 
+# ssl_sslv3=NO
+# ---------------------------------------------------------------------------- #
+# 
+# require_ssl_reuse=NO
+# ---------------------------------------------------------------------------- #
+# 
 ssl_ciphers=HIGH
-isolate_network=NO
-
+# ---------------------------------------------------------------------------- #
+# 
+#isolate_network=NO
+# ---------------------------------------------------------------------------- #
 ```
 
 ### cAdvisor

@@ -8,8 +8,9 @@ RUN apt-get update && \
         tini \
         nginx \
         openssl && \
-    apt-get clean && \
-    mkdir -p /etc/nginx/ssl/ && \
+    apt-get clean
+
+RUN mkdir -p /etc/nginx/ssl/ && \
     openssl req -x509 -sha256 -days 356 -nodes \
         -newkey rsa:2048 \
         -subj "/C=MA/ST=KBN/O=42-Network/CN=mnaimi.42.fr" \

@@ -1,6 +1,32 @@
 version: "3"
 
 services:
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
+  wordpress:
+    container_name: wordpress
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    volumes:
+      - wp-data:/var/www/wordpress
+    networks:
+      - inception-network
+    env_file:
+      - .env
+    restart: on-failure
   nginx:
     container_name: nginx
     build:
@@ -17,32 +43,6 @@ services:
     restart: on-failure
     volumes:
       - wp-data:/var/www/wordpress
-  wordpress:
-    container_name: wordpress
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
-    depends_on:
-      - mariadb
-    volumes:
-      - wp-data:/var/www/wordpress
-    networks:
-      - inception-network
-    env_file:
-      - .env
-    restart: on-failure
-  mariadb:
-    container_name: mariadb
-    build:
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-    volumes:
-      - db-data:/var/lib/mysql
-    networks:
-      - inception-network
-    env_file:
-      - .env
-    restart: on-failure
   ftp:
     container_name: ftp
     build:
@@ -124,12 +124,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/mnaimi/data/wordpress
+      device: /Users/mnaimi/data/wordpress
   db-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/mnaimi/data/mariadb
-
-# host:localhost in the DNS resolver inside the VM
+      device: /Users/mnaimi/data/mariadb

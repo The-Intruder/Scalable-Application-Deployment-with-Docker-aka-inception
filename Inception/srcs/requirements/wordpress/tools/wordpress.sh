@@ -28,7 +28,7 @@ if [ ! -e /var/www/wordpress/wp-config.php ]; then
 
     # Command which installs WordPress while creating an admin for it
     wp core install --allow-root \
-        --title='My_Website' \
+        --title='My Modest Blog' \
         --url="$DOMAIN_NAME" \
         --admin_user="$WP_ADMIN_USER" \
         --admin_password="$WP_ADMIN_PASS" \

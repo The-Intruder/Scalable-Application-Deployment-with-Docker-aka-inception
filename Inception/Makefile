@@ -1,65 +1,57 @@
 # **************************************************************************** #
-# ***************************    COLOR CODES    ****************************** #
-# **************************************************************************** #
-
-RST			:= \e[0m
-RED			:= \e[31m
-GRN			:= \e[32m
-YLW			:= \e[33m
-CYN			:= \e[36m
-
-# **************************************************************************** #
-# ****************************    FUNCTIONS    ******************************* #
-# **************************************************************************** #
-
-define print_status
-    @printf "$1$2\e[0m\n"
-endef
-
-# **************************************************************************** #
 # *****************************    RECIPES    ******************************** #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re start a-stop m-stop
+.PHONY: all clean fclean re start stop force-stop
 
-all: m-stop start
+all: start
 
 start:
-	@sudo docker-compose up --build
-	$(call print_status, ${GRN}, "Auto-Start has been performed successfully")
+	@sudo docker-compose -f srcs/docker-compose.yml up --build
 
-a-stop:
-	@sudo docker-compose down
-	$(call print_status, ${YLW}, "Auto-Halt has been performed successfully")
+stop:
+	@sudo docker-compose -f srcs/docker-compose.yml down
 
-m-stop:
+force-stop:
 	@sudo docker stop `sudo docker ps -aq`
-	$(call print_status, ${YLW}, "Manual-Halt has been performed successfully")
 
 clean:
-	@sudo docker rm -f `sudo docker ps -aq`
-	$(call print_status, ${RED}, "Containers deleted successfully")
+	@-sudo docker stop `sudo docker ps -qa`
+	@-sudo docker rm `sudo docker ps -qa`
+	@-sudo docker rmi -f `sudo docker images -qa`
+	@-sudo docker volume rm `sudo docker volume ls -q`
+	@-sudo docker network rm `sudo docker network ls -q`
+	@sudo rm -rf /home/mnaimi/data
+	@mkdir -p /home/mnaimi/data/wordpress
+	@mkdir -p /home/mnaimi/data/mariadb
 
 fclean: clean
-	@sudo docker rmi -f `sudo docker images -q`
-	$(call print_status, ${RED}, "Images deleted successfully")
+	@echo 'y' | sudo docker system prune -a
 
 re: fclean all
 
-reset:
-	$(call print_status, ${YLW}, "Stopping all the currently running continers ...")
-	@-sudo docker stop `sudo docker ps -aq`
-	$(call print_status, ${RED}, "Deleting all the cache in docker ...")
-	@echo 'y' | sudo docker system prune -a
-	$(call print_status, ${RED}, "Removing the ~/data folder ...")
-	@sudo rm -rf /home/mnaimi/data
-	$(call print_status, ${GRN}, "Making the ~/data/wordpress folder ...")
-	@mkdir -p /home/mnaimi/data/wordpress
-	$(call print_status, ${GRN}, "Making the ~/data/mariadb folder ...")
-	@mkdir -p /home/mnaimi/data/mariadb
-	$(call print_status, ${CYN}, "Running all the containers ...")
-	@sudo docker-compose -f srcs/docker-compose.yml -p Inception up --build
+# **************************************************************************** #
 
-# Connect the FTP to the wordpress ontainer ONLY
-# Delete the volumes
-# Check the evaluation pdf
+mac-start:
+	@docker-compose -f srcs/docker-compose.yml up --build
+
+mac-stop:
+	@docker-compose -f srcs/docker-compose.yml down
+
+mac-force-stop:
+	@docker stop `docker ps -aq`
+
+mac-clean:
+	@-docker stop `docker ps -qa`
+	@-docker rm `docker ps -qa`
+	@-docker rmi -f `docker images -qa`
+	@-docker volume rm `docker volume ls -q`
+	@-docker network rm `docker network ls -q`
+	@rm -rf ~/data
+	@mkdir -p ~/data/wordpress
+	@mkdir -p ~/data/mariadb
+
+mac-fclean: mac-clean
+	@echo 'y' | docker system prune -a
+
+mac-re: mac-fclean mac-start

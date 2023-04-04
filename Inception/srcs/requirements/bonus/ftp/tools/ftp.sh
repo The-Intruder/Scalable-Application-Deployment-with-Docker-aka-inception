@@ -1,30 +1,16 @@
 #!/bin/bash
 
-# Exit immediatly in case of an error
-# set -e
-
-if id "mnaimi" >/dev/null 2>&1; then
-    echo "User mnaimi already exists"
+if id "$FTP_USER" >/dev/null 2>&1; then
+    echo "User $FTP_USER already exists"
 else
-    echo "User mnaimi doesn't exist"
-    useradd -m -s /bin/bash mnaimi
-    chown -R mnaimi:mnaimi /home/mnaimi
-    echo "mnaimi:123456789" | chpasswd
-    echo "mnaimi" >> /etc/vsftpd.userlist
+    useradd -m -s /bin/bash $FTP_USER
+    chown -R $FTP_USER:$FTP_USER /home/$FTP_USER
+    echo "$FTP_USER:123456789" | chpasswd
 fi
 
-# if [ -d /var/run/vsftpd/empty ]; then
-#     echo "Folder \"/var/run/vsftpd/empty\" already exists"
-# else
-#     echo "Folder \"/var/run/vsftpd/empty\" does not exist"
-#     mkdir -p /var/run/vsftpd/empty
-#     chmod 777 /var/run/vsftpd/empty
-# fi
-
-if [ -e /etc/ssl/private/vsftpd.key ] && [ -e "/etc/ssl/private/vsftpd.crt" ]; then
+if [ -e "/etc/ssl/private/vsftpd.key" ] && [ -e "/etc/ssl/private/vsftpd.crt" ]; then
     echo "Certification already exists"
 else
-    echo "Certification does not exist"
     openssl req -x509 -sha256 -days 356 -nodes \
         -newkey rsa:2048 \
         -subj "/ST=KBN/O=VSFTPD/CN=vsftpd" \
@@ -35,6 +21,5 @@ fi
 if [ ! -d /var/www/wordpress ]; then
     mkdir -p /var/www/wordpress
 fi
-
 
 exec "$@"

@@ -27,6 +27,8 @@ if [ ! -d /var/lib/mysql/$WP_DB_NAME ]; then
     # Clears the in-memory cache of user and privilege information and reloads it from disk
     mysql -u root -e "FLUSH PRIVILEGES;"
 
+    mysqladmin -u root password $MDB_ROOT_PASS
+
     # Stop the mysql service
     service mysql stop &
     wait $!
